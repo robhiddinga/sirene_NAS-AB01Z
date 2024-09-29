@@ -1,0 +1,221 @@
+--[[
+  mqtt config Neo Coolcam NAS-AB01Z 
+  change nodeID_26 to your own value
+
+  domoticz.emitEvent('alarm_sirine', '3,1,1,2,8,5,'doorbell','off','off')
+  alarmVolume alarmDuration doorbellDuration doorbellVolume AlarmSound doorbellSound sirenSound alarmLed doorbellLed
+  
+  Melody 2,3,5 en 6 are about 10 sec. 
+]]--
+
+return
+{
+    active = true, -- optional
+    on =
+    {
+        -- at least one of these:
+        customEvents =
+        {
+            'alarm_sirene',
+        },
+    },
+    logging =
+    {
+        level = domoticz.LOG_INFO,
+        level = domoticz.LOG_DEBUG,
+        marker = 'Alarm_sirene',
+    },
+    execute = function(domoticz, item, triggerInfo)
+    
+    -- Helper info to understand siren parameters
+        
+        --[[
+            01 Doorbell
+            02 Für Elise
+            03 Westminster Chimes
+            04 Ding Dong
+            05 William Tell
+            06 Rondo Alla Turca
+            07 Police Siren
+            08 Evacuation
+            09 Beep Beep
+            10 Beep
+            
+            1 Alarm volume
+            2 Alarm Duration
+            3 Doorbell Duration
+            4 Doorbel Volume
+            5 Alarm Sound
+            6 Doorbell Sound
+            7 Default Siren Sound
+            8 Alarm Led
+            9 Doorbell Led       
+        ]]--
+    
+        -- Helper functions to set siren parameters
+        
+        local function setSirene(type)
+            if type == 'sirene' then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Default_Siren_Sound/set' -m '{"value":1}']])
+            else
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Default_Siren_Sound/set' -m '{"value":2}']]) 
+            end    
+        end 
+    
+        local function setAlarmDuration(option)
+            -- 0 = 0ff | 1 = 30S | 2 = 1m | 3 = 5m | 255 = always
+            if option == 1 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Duration/set' -m '{"value":1}']])
+            elseif option == 2 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Duration/set' -m '{"value":2}']])
+            elseif option == 3 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Duration/set' -m '{"value":3}']]) 
+            elseif option > 3 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Duration/set' -m '{"value":255}']]) 
+            else
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Duration/set' -m '{"value":0}']])
+            end    
+        end    
+
+        local function setDoorbellDuration(option)
+            -- 0 = 0ff | 1 = custom | 255 = always
+            if option == 0 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Duration/set' -m '{"value":0}']])
+            elseif option == 255 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Duration/set' -m '{"value":255}']])
+            else
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Duration/set' -m '{"value":1}']]) 
+            end    
+        end     
+
+        local function setDoorbellSound(number)
+            if number == 1 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":1}']])
+            elseif number == 2 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":2}']]) 
+            elseif number == 3 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":3}']])
+            elseif number == 4 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":4}']]) 
+            elseif number == 5 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":5}']]) 
+            elseif number == 6 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":6}']])
+            elseif number == 7 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":7}']]) 
+            elseif number == 8 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":8}']]) 
+            elseif number == 9 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":9}']])
+            elseif number == 10 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Sound_Selection/set' -m '{"value":10}']])             
+            end 
+        end
+        
+        local function setAlarmSound(number)
+            if number == 1 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":1}']])
+            elseif number == 2 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":2}']]) 
+            elseif number == 3 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":3}']])
+            elseif number == 4 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":4}']]) 
+            elseif number == 5 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":5}']]) 
+            elseif number == 6 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":6}']])
+            elseif number == 7 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":7}']]) 
+            elseif number == 8 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":8}']]) 
+            elseif number == 9 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":9}']])
+            elseif number == 10 then
+             domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Sound_Selection/set' -m '{"value":10}']])             
+            end 
+        end 
+        
+        local function setAlarmVolume(number)
+            if number == 1 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Volume/set' -m '{"value":1}']])
+            elseif number == 2 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Volume/set' -m '{"value":2}']])
+            else    
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_Volume/set' -m '{"value":3}']])
+            end    
+        end    
+
+        local function setDoorbellVolume(number)
+            if number == 1 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Volume/set' -m '{"value":1}']])
+            elseif number == 2 then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Volume/set' -m '{"value":2}']])
+            else    
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_Volume/set' -m '{"value":3}']])
+            end 
+        end 
+        
+        local function setDoorbellLed(state)
+            if state == 'on' then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_LED/set' -m '{"value":1}']]) 
+            else    
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Doorbell_LED/set' -m '{"value":0}']]) 
+            end    
+        end
+
+        local function setAlarmLed(state)
+            if state == 'on' then
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_LED/set' -m '{"value":1}']])  
+            else    
+                domoticz.executeShellCommand([[mosquitto_pub -h localhost -p 1883 -t 'zwave/nodeID_26/configuration/endpoint_0/Alarm_LED/set' -m '{"value":0}']])  
+            end    
+        end    
+    
+    -- your code starts here    
+    --[[ 
+    parameters:
+            alarmVolume alarmDuration doorbellDuration doorbellVolume AlarmSound doorbellSound sirenSound alarmLed doorbellLed
+    ]]--
+    --incoming parameters to array
+    local parameter = {}
+    local str = item.data
+    for param in string.gmatch(str, '([^,]+)') do
+        domoticz.log('parameter '..param, domoticz.LOG_DEBUG)
+        table.insert(parameter, param)
+    end
+    
+    -- perform corresponding action on device 
+    
+    local p01 = tonumber(parameter[1])
+    if p01 > 0 then
+       setAlarmVolume(p01) 
+    end
+    
+    local p02 = tonumber(parameter[2])
+    setAlarmDuration(p02)
+    
+    local p03 = tonumber(parameter[3])
+    domoticz.log('parameter '..parameter[3], domoticz.LOG_DEBUG)
+    setDoorbellDuration(p03)
+    
+    local p04 = tonumber(parameter[4])
+    if p04 > 0 then
+       setDoorbellVolume(p04) 
+    end 
+    local p05 = tonumber(parameter[5])
+    if p05 > 0 then
+       setAlarmSound(p05) 
+    end 
+    local p06 = tonumber(parameter[6])
+    if p06 > 0 then
+       setDoorbellSound(p06) 
+    end 
+    setSirene(parameter[7]) 
+    setAlarmLed(parameter[8]) 
+    setDoorbellLed(parameter[9])
+    
+    -- your code ends here      
+    
+    end
+}    
