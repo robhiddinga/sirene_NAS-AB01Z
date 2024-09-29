@@ -5,7 +5,7 @@
   domoticz.emitEvent('alarm_sirine', '3,1,1,2,8,5,'doorbell','off','off')
   alarmVolume alarmDuration doorbellDuration doorbellVolume AlarmSound doorbellSound sirenSound alarmLed doorbellLed
   
-  Melody 2,3,5 en 6 are about 10 sec. 
+  Melody 2,3,5 and 6 are about 10 sec. 
 ]]--
 
 return
