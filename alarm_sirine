@@ -10,10 +10,9 @@
 
 return
 {
-    active = true, -- optional
+    active = true, 
     on =
     {
-        -- at least one of these:
         customEvents =
         {
             'alarm_sirene',
