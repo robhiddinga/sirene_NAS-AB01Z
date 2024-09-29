@@ -1,10 +1,10 @@
 # sirene_NAS-AB01Z
-dzvents script for configuration of shenzhen / neo coolcam NAS-AB01Z via mqtt
+Domoticz DzVents script for configuration of shenzhen / neo coolcam NAS-AB01Z via mqtt
 Could not find much info on how to do, so now that I have it working, I shared my script
 It turned out writing down all the commands separate was the easiest solution as parameters conflicted with the needed single and double quotes
-Don't forget to replace the nodeID with your own nodeID of your siren device in zwave JS UI.
+Don't forget to replace the nodeID with your own nodeID of your siren device as seen in zwave JS UI.
 
-Easy to integrate in your doorbell and alarm scripts as you only to fire an event and turn the device on.
+Easy to integrate in your doorbell and alarm scripts as you only to have fire an event and turn on the device.
 
 use: 
 local SireneDevice = <domoticz device id>
